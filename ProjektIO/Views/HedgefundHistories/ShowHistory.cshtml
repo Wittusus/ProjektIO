@@ -1,0 +1,177 @@
+﻿@using ProjektIO.Extensions
+@model IEnumerable<ProjektIO.Entities.HedgefundHistory>
+
+@{
+
+    ViewData["Title"] = "Index";
+    var predDates = new List<DateTime>();
+
+    for(int i = 0; i<= 5; i++)
+    {
+        predDates.Add(DateTime.Now.AddDays(i));
+    }
+    var exValues = new List<double>();
+    foreach (var item in Model.OrderByDescending(x => x.ChangeDate).Take(5).ToList())
+    {
+        exValues.Add(item.ReturnRate);
+    }
+    var tendency = exValues.StdDev();
+    var predValues = new List<double>() { 0, 0, 0, 0, 0, 0 };
+    predValues[0] = exValues[0];
+    for(int i = 1; i <=5; i++)
+    {
+        predValues[i] = Math.Round(predValues[i - 1] + tendency, 2);
+    }
+    var t = 0;
+}
+
+<h1>Index</h1>
+
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ReturnRate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ChangeDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() > 0)
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReturnRate)
+                    </td>
+                    <td>
+                        @item.ChangeDate.ToShortDateString()
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                    <td>
+                        N/A
+                    </td>
+                    <td>
+                        N/A
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+        }
+    </tbody>
+</table>
+
+<div class="d-flex justify-content-center">
+    <canvas id="myChart" style="width:100%;"></canvas>
+</div>
+<div class="d-flex justify-content-center">
+    <canvas id="myChart1" style="width:100%;"></canvas>
+</div>
+
+
+<script>
+var xValues = [];
+var yValues = [];
+
+@foreach (var item in Model.OrderBy(x => x.ChangeDate).ToList())
+    {
+        <text>
+            xValues.push('@item.ChangeDate.ToShortDateString()');
+            yValues.push(@item.ReturnRate.ToString().Replace(',', '.'));
+           
+        </text>
+        
+    }
+
+new Chart("myChart", {
+  type: "line",
+  data: {
+    labels: xValues,
+    datasets: [
+        {
+      fill: true,
+      pointRadius: 1,
+      borderColor: "rgba(255,0,0,0.5)",
+      data: yValues
+    }
+    ]
+  },    
+  options: {
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "Procentowa stopa zwrotu w czasie",
+      fontSize: 16
+    }
+  }
+});
+
+
+</script>
+<script>
+var predX = [];
+var predY = [];
+
+
+@foreach (var item in predDates)
+    {
+        <text>
+
+            predX.push('@item.ToString()');
+           
+        </text>
+        
+    }
+@foreach (var item in predValues)
+    {
+        <text>
+
+            predY.push(@item.ToString().Replace(',', '.'));
+           
+        </text>
+        
+    }
+
+new Chart("myChart1", {
+  type: "line",
+  data: {
+    labels: predX,
+    datasets: [
+    {
+      fill: true,
+      pointRadius: 1,
+      borderColor: "rgba(0,0,255,0.5)",
+      data: predY
+    }
+    ]
+  },    
+  options: {
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "Predykcja stopy zwrotu w czasie",
+      fontSize: 16
+    }
+  }
+});
+
+
+</script>

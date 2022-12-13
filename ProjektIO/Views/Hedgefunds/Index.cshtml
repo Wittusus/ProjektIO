@@ -21,6 +21,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.CreationDate)
             </th>
+            <th>
+                Return Rate
+            </th>
+            <th>
+                Change Date
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -34,12 +40,31 @@
                 @Html.DisplayFor(modelItem => item.RequiredSalary)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CreationDate)
+                @item.CreationDate.ToShortDateString()
             </td>
+                @if (item.History.OrderByDescending(x => x.ChangeDate).FirstOrDefault() != null)
+                {
+                    <td>
+                        @item.History.OrderByDescending(x => x.ChangeDate).FirstOrDefault().ReturnRate
+                    </td>
+                    <td>
+                        @item.History.OrderByDescending(x => x.ChangeDate).FirstOrDefault().ChangeDate.ToShortDateString()
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        N/A
+                    </td>
+                    <td>
+                        N/A
+                    </td>
+                }
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
+                <a asp-controller="HedgefundHistories" asp-action="ShowHistory" asp-route-id="@item.Id">Show History</a>
             </td>
         </tr>
 }

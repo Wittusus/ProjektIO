@@ -11,5 +11,6 @@ namespace ProjektIO.Data
         {
         }
         public DbSet<Hedgefund> Hedgefunds { get; set; }
+        public DbSet<HedgefundHistory> HedgefundsHistory { get; set; }
     }
 }

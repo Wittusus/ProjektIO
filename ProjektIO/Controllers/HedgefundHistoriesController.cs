@@ -10,88 +10,90 @@ using ProjektIO.Entities;
 
 namespace ProjektIO.Controllers
 {
-    public class HedgefundsController : Controller
+    public class HedgefundHistoriesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public HedgefundsController(ApplicationDbContext context)
+        public HedgefundHistoriesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Hedgefunds
+        // GET: HedgefundHistories
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Hedgefunds
-                  .Include(x => x.History)
-                  .OrderByDescending(x => x.RequiredSalary)
-                  .ToListAsync());
+              return View(await _context.HedgefundsHistory.ToListAsync());
         }
 
-        // GET: Hedgefunds/Details/5
+        public async Task<IActionResult> ShowHistory(int id)
+        {
+            return View(await _context.HedgefundsHistory.Where(x => x.HedgefundId == id).ToListAsync());
+        }
+
+        // GET: HedgefundHistories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Hedgefunds == null)
+            if (id == null || _context.HedgefundsHistory == null)
             {
                 return NotFound();
             }
 
-            var hedgefund = await _context.Hedgefunds
+            var hedgefundHistory = await _context.HedgefundsHistory
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (hedgefund == null)
+            if (hedgefundHistory == null)
             {
                 return NotFound();
             }
 
-            return View(hedgefund);
+            return View(hedgefundHistory);
         }
 
-        // GET: Hedgefunds/Create
+        // GET: HedgefundHistories/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Hedgefunds/Create
+        // POST: HedgefundHistories/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,RequiredSalary,CreationDate")] Hedgefund hedgefund)
+        public async Task<IActionResult> Create([Bind("Id,ReturnRate,ChangeDate")] HedgefundHistory hedgefundHistory)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(hedgefund);
+                _context.Add(hedgefundHistory);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(hedgefund);
+            return View(hedgefundHistory);
         }
 
-        // GET: Hedgefunds/Edit/5
+        // GET: HedgefundHistories/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Hedgefunds == null)
+            if (id == null || _context.HedgefundsHistory == null)
             {
                 return NotFound();
             }
 
-            var hedgefund = await _context.Hedgefunds.FindAsync(id);
-            if (hedgefund == null)
+            var hedgefundHistory = await _context.HedgefundsHistory.FindAsync(id);
+            if (hedgefundHistory == null)
             {
                 return NotFound();
             }
-            return View(hedgefund);
+            return View(hedgefundHistory);
         }
 
-        // POST: Hedgefunds/Edit/5
+        // POST: HedgefundHistories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,RequiredSalary,CreationDate")] Hedgefund hedgefund)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ReturnRate,ChangeDate")] HedgefundHistory hedgefundHistory)
         {
-            if (id != hedgefund.Id)
+            if (id != hedgefundHistory.Id)
             {
                 return NotFound();
             }
@@ -100,12 +102,12 @@ namespace ProjektIO.Controllers
             {
                 try
                 {
-                    _context.Update(hedgefund);
+                    _context.Update(hedgefundHistory);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!HedgefundExists(hedgefund.Id))
+                    if (!HedgefundHistoryExists(hedgefundHistory.Id))
                     {
                         return NotFound();
                     }
@@ -116,49 +118,49 @@ namespace ProjektIO.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(hedgefund);
+            return View(hedgefundHistory);
         }
 
-        // GET: Hedgefunds/Delete/5
+        // GET: HedgefundHistories/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Hedgefunds == null)
+            if (id == null || _context.HedgefundsHistory == null)
             {
                 return NotFound();
             }
 
-            var hedgefund = await _context.Hedgefunds
+            var hedgefundHistory = await _context.HedgefundsHistory
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (hedgefund == null)
+            if (hedgefundHistory == null)
             {
                 return NotFound();
             }
 
-            return View(hedgefund);
+            return View(hedgefundHistory);
         }
 
-        // POST: Hedgefunds/Delete/5
+        // POST: HedgefundHistories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Hedgefunds == null)
+            if (_context.HedgefundsHistory == null)
             {
-                return Problem("Entity set 'ApplicationDbContext.Hedgefunds'  is null.");
+                return Problem("Entity set 'ApplicationDbContext.HedgefundsHistory'  is null.");
             }
-            var hedgefund = await _context.Hedgefunds.FindAsync(id);
-            if (hedgefund != null)
+            var hedgefundHistory = await _context.HedgefundsHistory.FindAsync(id);
+            if (hedgefundHistory != null)
             {
-                _context.Hedgefunds.Remove(hedgefund);
+                _context.HedgefundsHistory.Remove(hedgefundHistory);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool HedgefundExists(int id)
+        private bool HedgefundHistoryExists(int id)
         {
-          return _context.Hedgefunds.Any(e => e.Id == id);
+          return _context.HedgefundsHistory.Any(e => e.Id == id);
         }
     }
 }
