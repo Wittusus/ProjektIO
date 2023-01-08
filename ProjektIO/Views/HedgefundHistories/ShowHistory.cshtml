@@ -2,27 +2,35 @@
 @model IEnumerable<ProjektIO.Entities.HedgefundHistory>
 
 @{
-
-    ViewData["Title"] = "Index";
-    var predDates = new List<DateTime>();
-
-    for(int i = 0; i<= 5; i++)
-    {
-        predDates.Add(DateTime.Now.AddDays(i));
-    }
-    var exValues = new List<double>();
-    foreach (var item in Model.OrderByDescending(x => x.ChangeDate).Take(5).ToList())
-    {
-        exValues.Add(item.ReturnRate);
-    }
-    var tendency = exValues.StdDev();
     var predValues = new List<double>() { 0, 0, 0, 0, 0, 0 };
-    predValues[0] = exValues[0];
-    for(int i = 1; i <=5; i++)
+    var predDates = new List<DateTime>();
+    ViewData["Title"] = "Index";
+    try
     {
-        predValues[i] = Math.Round(predValues[i - 1] + tendency, 2);
+        predDates = new List<DateTime>();
+
+        for (int i = 0; i <= 5; i++)
+        {
+            predDates.Add(DateTime.Now.AddDays(i));
+        }
+        var exValues = new List<double>();
+        foreach (var item in Model.OrderByDescending(x => x.ChangeDate).Take(5).ToList())
+        {
+            exValues.Add(item.ReturnRate);
+        }
+        var tendency = exValues.StdDev();
+        predValues = new List<double>() { 0, 0, 0, 0, 0, 0 };
+        predValues[0] = exValues[0];
+        for (int i = 1; i <= 5; i++)
+        {
+            predValues[i] = Math.Round(predValues[i - 1] + tendency, 2);
+        }
     }
-    var t = 0;
+    catch (Exception e)
+    {
+
+    }
+
 }
 
 <h1>Index</h1>
@@ -66,15 +74,15 @@
         else
         {
             <tr>
-                    <td>
-                        N/A
-                    </td>
-                    <td>
-                        N/A
-                    </td>
-                    <td>
-                    </td>
-                </tr>
+                <td>
+                    N/A
+                </td>
+                <td>
+                    N/A
+                </td>
+                <td>
+                </td>
+            </tr>
         }
     </tbody>
 </table>
@@ -88,90 +96,90 @@
 
 
 <script>
-var xValues = [];
-var yValues = [];
+    var xValues = [];
+    var yValues = [];
 
-@foreach (var item in Model.OrderBy(x => x.ChangeDate).ToList())
+    @foreach (var item in Model.OrderBy(x => x.ChangeDate).ToList())
     {
         <text>
-            xValues.push('@item.ChangeDate.ToShortDateString()');
-            yValues.push(@item.ReturnRate.ToString().Replace(',', '.'));
-           
+                    xValues.push('@item.ChangeDate.ToShortDateString()');
+                    yValues.push(@item.ReturnRate.ToString().Replace(',', '.'));
+
         </text>
-        
+
     }
 
-new Chart("myChart", {
-  type: "line",
-  data: {
-    labels: xValues,
-    datasets: [
-        {
-      fill: true,
-      pointRadius: 1,
-      borderColor: "rgba(255,0,0,0.5)",
-      data: yValues
-    }
-    ]
-  },    
-  options: {
-    legend: {display: false},
-    title: {
-      display: true,
-      text: "Procentowa stopa zwrotu w czasie",
-      fontSize: 16
-    }
-  }
-});
+    new Chart("myChart", {
+      type: "line",
+      data: {
+        labels: xValues,
+        datasets: [
+            {
+          fill: true,
+          pointRadius: 1,
+          borderColor: "rgba(255,0,0,0.5)",
+          data: yValues
+        }
+        ]
+      },
+      options: {
+        legend: {display: false},
+        title: {
+          display: true,
+          text: "Procentowa stopa zwrotu w czasie",
+          fontSize: 16
+        }
+      }
+    });
 
 
 </script>
 <script>
-var predX = [];
-var predY = [];
+    var predX = [];
+    var predY = [];
 
 
-@foreach (var item in predDates)
+    @foreach (var item in predDates)
     {
         <text>
 
-            predX.push('@item.ToString()');
-           
+                    predX.push('@item.ToString()');
+
         </text>
-        
+
     }
-@foreach (var item in predValues)
+    @foreach (var item in predValues)
     {
         <text>
 
-            predY.push(@item.ToString().Replace(',', '.'));
-           
+                    predY.push(@item.ToString().Replace(',', '.'));
+
         </text>
-        
+
     }
 
-new Chart("myChart1", {
-  type: "line",
-  data: {
-    labels: predX,
-    datasets: [
-    {
-      fill: true,
-      pointRadius: 1,
-      borderColor: "rgba(0,0,255,0.5)",
-      data: predY
-    }
-    ]
-  },    
-  options: {
-    legend: {display: false},
-    title: {
-      display: true,
-      text: "Predykcja stopy zwrotu w czasie",
-      fontSize: 16
-    }
-  }
-});
+    new Chart("myChart1", {
+      type: "line",
+      data: {
+        labels: predX,
+        datasets: [
+        {
+          fill: true,
+          pointRadius: 1,
+          borderColor: "rgba(0,0,255,0.5)",
+          data: predY
+        }
+        ]
+      },
+      options: {
+        legend: {display: false},
+        title: {
+          display: true,
+          text: "Predykcja stopy zwrotu w czasie",
+          fontSize: 16
+        }
+      }
+    });
 
 
 </script>
