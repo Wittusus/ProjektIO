@@ -70,6 +70,7 @@ namespace ProjektIO.Controllers
             //            Console.WriteLine(path);
             return RedirectToAction(nameof(Index));
         }
+
         // GET: Hedgefunds/Details/5
         public async Task<IActionResult> Details(int? id)
         {
