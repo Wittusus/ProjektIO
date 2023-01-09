@@ -31,11 +31,13 @@ namespace ProjektIO.Controllers
                   .OrderByDescending(x => x.RequiredSalary)
                   .ToListAsync());
         }
+        [Authorize(Roles = "Admin")]
         public IActionResult Import()
         {
             return View();
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ImportCSV([FromForm] IFormFile file)
         {
             string path = Path.Combine("/", "Uploads");
@@ -70,7 +72,6 @@ namespace ProjektIO.Controllers
             //            Console.WriteLine(path);
             return RedirectToAction(nameof(Index));
         }
-
         // GET: Hedgefunds/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -90,6 +91,7 @@ namespace ProjektIO.Controllers
         }
 
         // GET: Hedgefunds/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -98,6 +100,7 @@ namespace ProjektIO.Controllers
         // POST: Hedgefunds/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,RequiredSalary,CreationDate")] Hedgefund hedgefund)
@@ -112,6 +115,7 @@ namespace ProjektIO.Controllers
         }
 
         // GET: Hedgefunds/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Hedgefunds == null)
@@ -130,6 +134,7 @@ namespace ProjektIO.Controllers
         // POST: Hedgefunds/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,RequiredSalary,CreationDate")] Hedgefund hedgefund)
@@ -163,6 +168,7 @@ namespace ProjektIO.Controllers
         }
 
         // GET: Hedgefunds/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Hedgefunds == null)
@@ -181,6 +187,7 @@ namespace ProjektIO.Controllers
         }
 
         // POST: Hedgefunds/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

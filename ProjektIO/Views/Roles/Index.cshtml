@@ -1,4 +1,5 @@
-﻿@model IEnumerable<ProjektIO.Entities.HedgefundHistory>
+﻿@using Microsoft.AspNetCore.Identity;
+@model IEnumerable<IdentityRole>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,10 +14,13 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ReturnRate)
+                @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ChangeDate)
+                @Html.DisplayNameFor(model => model.NormalizedName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ConcurrencyStamp)
             </th>
             <th></th>
         </tr>
@@ -25,10 +29,13 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.ReturnRate)
+                @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ChangeDate)
+                @Html.DisplayFor(modelItem => item.NormalizedName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ConcurrencyStamp)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
