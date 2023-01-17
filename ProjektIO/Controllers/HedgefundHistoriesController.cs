@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ProjektIO.Data;
 using ProjektIO.Entities;
+using ProjektIO.Extensions;
+using ProjektIO.Models;
 
 namespace ProjektIO.Controllers
 {
@@ -27,7 +29,36 @@ namespace ProjektIO.Controllers
 
         public async Task<IActionResult> ShowHistory(int id)
         {
-            return View(await _context.HedgefundsHistory.Where(x => x.HedgefundId == id).ToListAsync());
+            var histories = await _context.HedgefundsHistory.Where(x => x.HedgefundId == id).ToListAsync();
+            var chartData = new List<LineChartData>
+            {
+                /*
+                new LineChartData { xValue = new DateTime(2005, 01, 01), yValue = 21, yValue1 = 28 },
+                new LineChartData { xValue = new DateTime(2006, 01, 01), yValue = 24, yValue1 = 44 },
+                new LineChartData { xValue = new DateTime(2007, 01, 01), yValue = 36, yValue1 = 48 },
+                new LineChartData { xValue = new DateTime(2008, 01, 01), yValue = 38, yValue1 = 50 },
+                new LineChartData { xValue = new DateTime(2009, 01, 01), yValue = 54, yValue1 = 66 },
+                new LineChartData { xValue = new DateTime(2010, 01, 01), yValue = 57, yValue1 = 78 },
+                new LineChartData { xValue = new DateTime(2011, 01, 01), yValue = 70, yValue1 = 84 },
+                */
+            };
+            foreach (var item in histories)
+            {
+                var outputItem = new LineChartData {  xValue = item.ChangeDate, yValue = item.ReturnRate };
+                chartData.Add(outputItem);
+            }
+            var returnRates = histories.Select(x => x.ReturnRate).ToList();
+            var lastRate = returnRates.LastOrDefault();
+            var dev = returnRates.StdDev();
+            for (int i = 1; i<=5; i++)
+            {
+                lastRate = lastRate + dev;
+                var outputItem = new LineChartData { xValue = DateTime.Now.AddDays(i), yValue = lastRate };
+                chartData.Add(outputItem);
+            }
+            chartData = chartData.OrderByDescending(x => x.xValue).ToList();
+            var viewModel = new HedgeFundHistoriesGetViewModel() { HedgefundHistories = histories, ChartDatas = chartData };
+            return View(viewModel);
         }
 
         // GET: HedgefundHistories/Details/5
