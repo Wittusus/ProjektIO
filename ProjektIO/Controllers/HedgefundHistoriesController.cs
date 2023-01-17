@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ using ProjektIO.Models;
 
 namespace ProjektIO.Controllers
 {
+    [Authorize]
     public class HedgefundHistoriesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -80,6 +82,7 @@ namespace ProjektIO.Controllers
         }
 
         // GET: HedgefundHistories/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -88,6 +91,7 @@ namespace ProjektIO.Controllers
         // POST: HedgefundHistories/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ReturnRate,ChangeDate")] HedgefundHistory hedgefundHistory)
@@ -102,6 +106,7 @@ namespace ProjektIO.Controllers
         }
 
         // GET: HedgefundHistories/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.HedgefundsHistory == null)
@@ -120,6 +125,7 @@ namespace ProjektIO.Controllers
         // POST: HedgefundHistories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,ReturnRate,ChangeDate")] HedgefundHistory hedgefundHistory)
@@ -153,6 +159,7 @@ namespace ProjektIO.Controllers
         }
 
         // GET: HedgefundHistories/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.HedgefundsHistory == null)
@@ -171,6 +178,7 @@ namespace ProjektIO.Controllers
         }
 
         // POST: HedgefundHistories/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

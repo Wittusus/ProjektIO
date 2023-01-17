@@ -1,0 +1,14 @@
+﻿@page
+@model ProjektIO.Areas.Identity.Pages.Account.Manage.SalaryModel
+@{
+}
+<form method="post">
+    <div class="form-floating input-group">
+        <input name="salary" type="number" value="@ViewData["Salary"]" class="form-control" />
+                        <div class="input-group-append">
+                            <span class="h-100 input-group-text text-success font-weight-bold">✓</span>
+                        </div>
+                    <label name="salary" class="form-label">Salary</label>
+                </div>
+<input type="submit" value="send"/>
+</form>

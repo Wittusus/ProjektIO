@@ -7,5 +7,6 @@
         public decimal RequiredSalary { get; set; }
         public DateTime CreationDate { get; set; }
         public List<HedgefundHistory> History { get; set; }
+        public DateTime ReturnTime { get; set; }
     }
 }

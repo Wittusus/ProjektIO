@@ -1,0 +1,64 @@
+﻿@model ProjektIO.Entities.Transactions
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Transactions</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="CreationTime" class="control-label"></label>
+                <input asp-for="CreationTime" class="form-control" />
+                <span asp-validation-for="CreationTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CreationUserId" class="control-label"></label>
+                <select asp-for="CreationUserId" class="form-control" asp-items="ViewBag.CreationUserId"></select>
+                <span asp-validation-for="CreationUserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TargetUserId" class="control-label"></label>
+                <select asp-for="TargetUserId" class="form-control" asp-items="ViewBag.TargetUserId"></select>
+                <span asp-validation-for="TargetUserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TransactionType" class="control-label"></label>
+                <select asp-for="TransactionType" class="form-control"></select>
+                <span asp-validation-for="TransactionType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AmountOfTransaction" class="control-label"></label>
+                <input asp-for="AmountOfTransaction" class="form-control" />
+                <span asp-validation-for="AmountOfTransaction" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="HedgefundId" class="control-label"></label>
+                <select asp-for="HedgefundId" class="form-control" asp-items="ViewBag.HedgefundId"></select>
+                <span asp-validation-for="HedgefundId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ReturnTimeOfInvestment" class="control-label"></label>
+                <input asp-for="ReturnTimeOfInvestment" class="form-control" />
+                <span asp-validation-for="ReturnTimeOfInvestment" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

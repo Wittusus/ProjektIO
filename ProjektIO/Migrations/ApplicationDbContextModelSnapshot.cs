@@ -16,7 +16,7 @@ namespace ProjektIO.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.10")
+                .HasAnnotation("ProductVersion", "6.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -231,6 +231,9 @@ namespace ProjektIO.Migrations
                     b.Property<decimal>("RequiredSalary")
                         .HasColumnType("decimal(65,30)");
 
+                    b.Property<DateTime>("ReturnTime")
+                        .HasColumnType("datetime(6)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Hedgefunds");
@@ -245,7 +248,7 @@ namespace ProjektIO.Migrations
                     b.Property<DateTime>("ChangeDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("HedgefundId")
+                    b.Property<int>("HedgefundId")
                         .HasColumnType("int");
 
                     b.Property<double>("ReturnRate")
@@ -256,6 +259,87 @@ namespace ProjektIO.Migrations
                     b.HasIndex("HedgefundId");
 
                     b.ToTable("HedgefundsHistory");
+                });
+
+            modelBuilder.Entity("ProjektIO.Entities.Salaries", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Salary")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Salaries");
+                });
+
+            modelBuilder.Entity("ProjektIO.Entities.Transactions", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("AmountOfTransaction")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("CreationUserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int?>("HedgefundId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ReturnTimeOfInvestment")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("TargetUserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int>("TransactionType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreationUserId");
+
+                    b.HasIndex("HedgefundId");
+
+                    b.HasIndex("TargetUserId");
+
+                    b.ToTable("Transactions");
+                });
+
+            modelBuilder.Entity("ProjektIO.Models.UserRolesIndex", b =>
+                {
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.ToView("UserRolesIndex");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -313,7 +397,45 @@ namespace ProjektIO.Migrations
                 {
                     b.HasOne("ProjektIO.Entities.Hedgefund", null)
                         .WithMany("History")
+                        .HasForeignKey("HedgefundId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ProjektIO.Entities.Salaries", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ProjektIO.Entities.Transactions", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "CreationUser")
+                        .WithMany()
+                        .HasForeignKey("CreationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjektIO.Entities.Hedgefund", "Hedgefund")
+                        .WithMany()
                         .HasForeignKey("HedgefundId");
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "TargetUser")
+                        .WithMany()
+                        .HasForeignKey("TargetUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreationUser");
+
+                    b.Navigation("Hedgefund");
+
+                    b.Navigation("TargetUser");
                 });
 
             modelBuilder.Entity("ProjektIO.Entities.Hedgefund", b =>
