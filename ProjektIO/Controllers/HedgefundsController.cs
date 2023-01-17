@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,6 +31,18 @@ namespace ProjektIO.Controllers
                   .Include(x => x.History)
                   .OrderByDescending(x => x.RequiredSalary)
                   .ToListAsync());
+        }
+        // GET: Available
+        public async Task<IActionResult> Available()
+        {
+            var salary = await _context.Salaries.FirstOrDefaultAsync(x => x.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if (salary == null)
+                return View(new List<Hedgefund>());
+            return View(await _context.Hedgefunds
+                .Include(x => x.History)
+                .Where(x => x.RequiredSalary <= salary.Salary)
+                .OrderByDescending(x => x.RequiredSalary)
+                .ToListAsync());
         }
         [Authorize(Roles = "Admin")]
         public IActionResult Import()

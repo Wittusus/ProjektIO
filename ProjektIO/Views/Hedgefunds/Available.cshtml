@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<ProjektIO.Entities.Hedgefund>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Available to you";
     var dataSource = Model.Select(x => new
     {
         Id = x.Id,
@@ -13,12 +13,13 @@
     }).ToList(); 
 }
 
-<h1>Index</h1>
+<h1>Hedgefunds available to you:</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
-    <a asp-action="Import" >Import</a> |
+    <a asp-action="Import" >Import</a> 
 </p>
+
 @*<table class="table table-striped">
     <thead>
         <tr>
@@ -79,20 +80,20 @@
         </tr>
 }
     </tbody>
-</table>
-*@
+</table>*@
+
 <ejs-grid id="Grid" dataSource="dataSource" allowGrouping="true" allowSorting="true" allowFiltering="true" allowPaging="true" showColumnMenu="true">
-    <e-grid-filterSettings type="CheckBox"></e-grid-filterSettings>
-    <e-grid-groupsettings showGroupedColumn="true"></e-grid-groupsettings>
-    <e-grid-columns>
-        <e-grid-column field="Name" headerText="Name" width="200"></e-grid-column>
-        <e-grid-column field="RequiredSalary" headerText="RequiredSalary"></e-grid-column>
-        <e-grid-column field="CreationDate" headerText="Creation Date" format='dd.MM.yyyy'></e-grid-column>
-        <e-grid-column field="ReturnRate" headerText="Return Rate" width="200"></e-grid-column>
-        <e-grid-column field="ChangeDate" headerText="Change Date" width="200" format='dd.MM.yyyy'></e-grid-column>
+               <e-grid-filterSettings type="CheckBox"></e-grid-filterSettings>
+                <e-grid-groupsettings showGroupedColumn="true"></e-grid-groupsettings>
+                <e-grid-columns>
+                    <e-grid-column field="Name" headerText="Name"  width="200"></e-grid-column>
+                    <e-grid-column field="RequiredSalary" headerText="RequiredSalary"></e-grid-column>
+                    <e-grid-column field="CreationDate" headerText="Creation Date" format='dd.MM.yyyy'></e-grid-column>
+                    <e-grid-column field="ReturnRate" headerText="Return Rate" width="200"></e-grid-column>
+                    <e-grid-column field="ChangeDate" headerText="Change Date" width="200" format='dd.MM.yyyy'></e-grid-column>
         <e-grid-column headerText="Actions" template="#actions" width="300" format='dd.MM.yyyy'></e-grid-column>
-    </e-grid-columns>
-</ejs-grid>
+                </e-grid-columns>
+   </ejs-grid>
 
 <script id="actions" type="text/x-template">
 

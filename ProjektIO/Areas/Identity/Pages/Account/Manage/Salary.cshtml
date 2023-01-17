@@ -3,12 +3,15 @@
 @{
 }
 <form method="post">
+    <label>Current salary: @ViewData["Salary"]</label>
     <div class="form-floating input-group">
-        <input name="salary" type="number" value="@ViewData["Salary"]" class="form-control" />
+        
+
+        <input name="salary" required type="number"  class="form-control" />
                         <div class="input-group-append">
                             <span class="h-100 input-group-text text-success font-weight-bold">✓</span>
                         </div>
-                    <label name="salary" class="form-label">Salary</label>
+        <label name="salary" class="form-label">@ViewData["Salary"]</label>
                 </div>
-<input type="submit" value="send"/>
+<input class="btn btn-primary mt-2" type="submit" value="Send"/>
 </form>

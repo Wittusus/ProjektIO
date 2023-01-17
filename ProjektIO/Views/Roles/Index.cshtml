@@ -10,7 +10,7 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table table-striped">
+@*<table class="table table-striped">
     <thead>
         <tr>
             <th>
@@ -46,3 +46,23 @@
 }
     </tbody>
 </table>
+*@
+
+   <ejs-grid id="Grid" dataSource="Model" allowGrouping="true" allowSorting="true" allowFiltering="true" allowPaging="true" showColumnMenu="true">
+               <e-grid-filterSettings type="CheckBox"></e-grid-filterSettings>
+                <e-grid-groupsettings showGroupedColumn="true"></e-grid-groupsettings>
+                <e-grid-columns>
+                    <e-grid-column field="Name" headerText="Name"  width="200"></e-grid-column>
+        <e-grid-column field="NormalizedName" headerText="Normalized Name"></e-grid-column>
+        <e-grid-column field="ConcurrencyStamp" headerText="Concurrency Stamp" format='dd.MM.yyyy'></e-grid-column>
+                 
+        <e-grid-column headerText="Actions" template="#actions" width="300" format='dd.MM.yyyy'></e-grid-column>
+                </e-grid-columns>
+   </ejs-grid>
+
+<script id="actions" type="text/x-template">
+
+            <a href="/Roles/Edit/${Id}">Edit</a>&nbsp;
+    <a href="/Roles/Details/${Id}">Details</a>&nbsp;
+            <a href="/Roles/Delete/${Id}">Delete</a>&nbsp;
+</script>

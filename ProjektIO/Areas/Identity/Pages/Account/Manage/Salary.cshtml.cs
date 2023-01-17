@@ -11,6 +11,8 @@ namespace ProjektIO.Areas.Identity.Pages.Account.Manage
     public class SalaryModel : PageModel
     {
         private readonly ApplicationDbContext _context;
+
+
         public SalaryModel(ApplicationDbContext context)
         {
             _context = context;
@@ -19,7 +21,7 @@ namespace ProjektIO.Areas.Identity.Pages.Account.Manage
         {
             var UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var result = await _context.Salaries.FirstOrDefaultAsync(x => x.UserId == UserId);
-            if (result != null) { ViewData["Salary"] = result.Salary; }
+            if (result != null) { ViewData["Salary"] = result.Salary.ToString("0.00"); }
             return Page();
         }
         public async Task<IActionResult> OnPostAsync(decimal salary)
