@@ -2,36 +2,62 @@
 
 @{
     ViewData["Title"] = "Index";
+    var dataSource = Model.Select(x =>  new
+    {
+        Id = x.Id,
+        Date = x.CreationTime,
+        From = x.CreationUser.UserName,
+        To = x.TargetUser.UserName,
+        Type = x.TransactionType.ToString(),
+        Amount = x.AmountOfTransaction,
+        Hedgefund = x.Hedgefund != null ? x.Hedgefund.Name : "N/A",
+        ReturnTimeOfInvestment = x.ReturnTimeOfInvestment
+    });
 }
 
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    
+        @if (User.IsInRole("Admin"))
+        {
+        
+        <a asp-action="Create">
+            Create New</a>
+        } else
+        {
+        <a class="btn btn-primary btn-lg" asp-action="Create">
+            INVEST
+        </a>
+        }
+
+        
+        </a>
+    <label>Balance: @ViewData["Balance"] </label>
 </p>
-<table class="table table-striped">
+@*<table class="table table-striped">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.CreationTime)
+                Date
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CreationUser)
+                From
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TargetUser)
+                To
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TransactionType)
+                Type
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.AmountOfTransaction)
+                Amount
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Hedgefund)
+                Hedgefund
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ReturnTimeOfInvestment)
+                Return time of investment
             </th>
             <th></th>
         </tr>
@@ -43,10 +69,10 @@
                 @Html.DisplayFor(modelItem => item.CreationTime)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CreationUser.Id)
+                @Html.DisplayFor(modelItem => item.CreationUser.UserName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TargetUser.Id)
+                @Html.DisplayFor(modelItem => item.TargetUser.UserName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.TransactionType)
@@ -55,17 +81,46 @@
                 @Html.DisplayFor(modelItem => item.AmountOfTransaction)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Hedgefund.Id)
+                @Html.DisplayFor(modelItem => item.Hedgefund.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ReturnTimeOfInvestment)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> 
             </td>
         </tr>
 }
     </tbody>
-</table>
+</table>*@
+
+<ejs-grid id="Grid" dataSource="dataSource" allowGrouping="true" allowSorting="true" allowFiltering="true" allowPaging="true" showColumnMenu="true"
+          allowExcelExport="true" toolbarClick="toolbarClick" toolbar="@(new List<string>() { "ExcelExport" })">
+    <e-grid-filterSettings type="CheckBox"></e-grid-filterSettings>
+    <e-grid-groupsettings showGroupedColumn="true"></e-grid-groupsettings>
+    <e-grid-columns>
+        <e-grid-column field="Date" headerText="Date" format='dd.MM.yyyy hh:mm'></e-grid-column>
+        <e-grid-column field="From" headerText="From" ></e-grid-column>
+        <e-grid-column field="To" headerText="To" ></e-grid-column>
+        <e-grid-column field="Type" headerText="Type" ></e-grid-column>
+        <e-grid-column field="Amount" headerText="Amount" ></e-grid-column>
+        <e-grid-column field="Hedgefund" headerText="Hedgefund" ></e-grid-column>
+        <e-grid-column field="ReturnTimeOfInvestment" headerText="ReturnTimeOfInvestment" format='dd.MM.yyyy'></e-grid-column>
+        <e-grid-column headerText="Actions" template="#actions"></e-grid-column>
+    </e-grid-columns>
+</ejs-grid>
+
+<script id="actions" type="text/x-template">
+            <a href="/Transactions/Details/${Id}">Details</a>
+</script>
+
+        <script>
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("Grid").ej2_instances[0];
+        if (args.item.id === 'Grid_excelexport') {
+            gridObj.excelExport();
+            
+        }
+
+    }
+</script>

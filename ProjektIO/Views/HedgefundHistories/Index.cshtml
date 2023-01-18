@@ -40,7 +40,8 @@
     </tbody>
 </table>*@
 
-            <ejs-grid id="Grid" dataSource="Model" allowGrouping="true" allowSorting="true" allowFiltering="true" allowPaging="true" showColumnMenu="true">
+            <ejs-grid id="Grid" dataSource="Model" allowGrouping="true" allowSorting="true" allowFiltering="true" allowPaging="true" showColumnMenu="true"
+          allowExcelExport="true" toolbarClick="toolbarClick" toolbar="@(new List<string>() { "ExcelExport" })">
                <e-grid-filterSettings type="CheckBox"></e-grid-filterSettings>
                 <e-grid-groupsettings showGroupedColumn="true"></e-grid-groupsettings>
                 <e-grid-columns>
@@ -55,4 +56,13 @@
             <a href="/HedgefundHistories/Edit/${Id}">Edit</a>&nbsp;
     <a href="/HedgefundHistories/Details/${Id}">Details</a>&nbsp;
             <a href="/HedgefundHistories/Delete/${Id}">Delete</a>&nbsp;
+</script>
+
+                            <script>
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("Grid").ej2_instances[0];
+        if (args.item.id === 'Grid_excelexport') {
+            gridObj.excelExport();
+        }
+    }
 </script>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,8 +25,23 @@ namespace ProjektIO.Controllers
         // GET: Transactions
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Transactions.Include(t => t.CreationUser).Include(t => t.Hedgefund).Include(t => t.TargetUser);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var balance = await _context.Transactions.Where(x => x.TargetUserId == userId)
+            .Select(x => x.AmountOfTransaction)
+            .SumAsync();
+            ViewData["Balance"] = balance.ToString("0.00");
+
+            if(User.IsInRole("Admin"))
+            {
+                var applicationDbContext2 = _context.Transactions.Include(t => t.CreationUser).Include(t => t.Hedgefund).Include(t => t.TargetUser)
+                .OrderByDescending(x => x.CreationTime);
+                return View(await applicationDbContext2.ToListAsync());
+            }
+
+            var applicationDbContext = _context.Transactions.Include(t => t.CreationUser).Include(t => t.Hedgefund).Include(t => t.TargetUser)
+                .Where(x => x.CreationUserId == userId || x.TargetUserId == userId).OrderByDescending(x => x.CreationTime);
             return View(await applicationDbContext.ToListAsync());
+
         }
 
         // GET: Transactions/Details/5
@@ -50,11 +66,15 @@ namespace ProjektIO.Controllers
         }
 
         // GET: Transactions/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["CreationUserId"] = new SelectList(_context.Users, "Id", "UserName");
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var balance = await _context.Transactions.Where(x => x.TargetUserId == userId)
+                .Select(x => x.AmountOfTransaction)
+                .SumAsync();
             ViewData["HedgefundId"] = new SelectList(_context.Hedgefunds, "Id", "Name");
             ViewData["TargetUserId"] = new SelectList(_context.Users, "Id", "UserName");
+            ViewData["Balance"] = balance.ToString("0.00");
             return View();
         }
 
@@ -63,14 +83,50 @@ namespace ProjektIO.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CreationTime,CreationUserId,TargetUserId,TransactionType,AmountOfTransaction,HedgefundId,ReturnTimeOfInvestment")] Transactions transactions)
+        public async Task<IActionResult> Create([Bind("TargetUserId,TransactionType,AmountOfTransaction,HedgefundId")] Transactions transactions)
         {
-            if (ModelState.IsValid)
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var balance = await _context.Transactions.Where(x => x.TargetUserId == userId)
+                .Select(x => x.AmountOfTransaction)
+                .SumAsync();
+
+
+            if (!User.IsInRole("Admin"))
+                transactions.TransactionType = TypeOfTransaction.Invest;
+
+            if (transactions.TransactionType == TypeOfTransaction.Income)
             {
+                transactions.CreationUserId = userId;
+                transactions.TargetUserId = userId;
+                transactions.CreationTime = DateTime.Now.AddSeconds(15);
                 _context.Add(transactions);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+            } else {
+
+                if (balance <= transactions.AmountOfTransaction && transactions.TargetUserId == userId)
+                    throw new Exception("Not enough money");
+                var trans = new List<Transactions>();
+
+            
+                trans.Add(new Transactions
+                {
+                    CreationUserId = userId,
+                    CreationTime = DateTime.Now,
+                    AmountOfTransaction = transactions.AmountOfTransaction * -1,
+                    TargetUserId = userId,
+                    TransactionType = TypeOfTransaction.BlockCash
+                });
+            
+                
+                transactions.CreationUserId = userId;
+                transactions.CreationTime = DateTime.Now.AddSeconds(15);
+                trans.Add(transactions);
+                _context.AddRange(trans);
+                await _context.SaveChangesAsync();
             }
+            return RedirectToAction(nameof(Index));
+            
             ViewData["CreationUserId"] = new SelectList(_context.Users, "Id", "Id", transactions.CreationUserId);
             ViewData["HedgefundId"] = new SelectList(_context.Hedgefunds, "Id", "Id", transactions.HedgefundId);
             ViewData["TargetUserId"] = new SelectList(_context.Users, "Id", "Id", transactions.TargetUserId);

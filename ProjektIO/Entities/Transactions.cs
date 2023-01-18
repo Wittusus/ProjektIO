@@ -9,7 +9,8 @@ namespace ProjektIO.Entities
         Invest,
         Income,
         Return,
-        ReturnToUser
+        ReturnToUser,
+        BlockCash,
     }
     public class Transactions
     {

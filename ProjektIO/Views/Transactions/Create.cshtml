@@ -14,17 +14,17 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="CreationUserId" class="control-label"></label>
-                <select asp-for="CreationUserId" class ="form-control" asp-items="ViewBag.CreationUserId"></select>
-            </div>
-            <div class="form-group">
                 <label asp-for="TargetUserId" class="control-label"></label>
                 <select asp-for="TargetUserId" class ="form-control" asp-items="ViewBag.TargetUserId"></select>
             </div>
             <div class="form-group">
-                <label asp-for="TransactionType" class="control-label"></label>
+                @if (User.IsInRole("Admin"))
+                {
+                    <label asp-for="TransactionType" class="control-label"></label>
                 <select asp-for="TransactionType" asp-items="Html.GetEnumSelectList<TypeOfTransaction>()" class="form-control"></select>
-                <span asp-validation-for="TransactionType" class="text-danger"></span>
+                    <span asp-validation-for="TransactionType" class="text-danger"></span>
+                } 
+
             </div>
             <div class="form-group">
                 <label asp-for="AmountOfTransaction" class="control-label"></label>
