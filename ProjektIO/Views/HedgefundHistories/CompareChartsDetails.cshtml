@@ -1,0 +1,62 @@
+﻿@using ProjektIO.Extensions
+@using Syncfusion.EJ2;
+@model ChartDetailsViewModel
+
+@{
+    
+}
+
+<a asp-action="CompareCharts" class="btn btn-secondary">Go back</a>
+<ejs-chart id="container" load="window.onChartLoad" title="History of Return Rates - Hedgefund @Model.HedgefundOneName">
+            <e-chart-tooltipsettings enable="true">
+            </e-chart-tooltipsettings>
+            <e-chart-primaryxaxis valueType="DateTime"
+                                  labelFormat="dd.MM.yyyy"
+                                  intervalType="Days"
+                                  edgeLabelPlacement="Shift">
+                <e-majorgridlines width="0"></e-majorgridlines>
+            </e-chart-primaryxaxis>
+            <e-chart-primaryyaxis labelFormat="{value}%"
+                                  rangePadding="None"
+                                  minimum=0
+                                  maximum=20
+                                  interval=2>
+                <e-linestyle width="0"></e-linestyle>
+                <e-majorticklines width="0"></e-majorticklines>
+            </e-chart-primaryyaxis>
+            <e-chart-chartarea>
+                <e-chartarea-border width="0"></e-chartarea-border>
+            </e-chart-chartarea>
+            <e-series-collection>
+        <e-series dataSource="Model.HedgefundOneChartData" name="@Model.HedgefundOneName" xName="xValue" width="2" opacity="1" yName="yValue" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                    <e-series-marker visible="true" height="10" width="10"></e-series-marker>
+                </e-series>
+            </e-series-collection>
+        </ejs-chart>
+
+<ejs-chart id="container2" load="window.onChartLoad" title="History of Return Rates - Hedgefund @Model.HedgefundTwoName">
+            <e-chart-tooltipsettings enable="true">
+            </e-chart-tooltipsettings>
+            <e-chart-primaryxaxis valueType="DateTime"
+                                  labelFormat="dd.MM.yyyy"
+                                  intervalType="Days"
+                                  edgeLabelPlacement="Shift">
+                <e-majorgridlines width="0"></e-majorgridlines>
+            </e-chart-primaryxaxis>
+            <e-chart-primaryyaxis labelFormat="{value}%"
+                                  rangePadding="None"
+                                  minimum=0
+                                  maximum=20
+                                  interval=2>
+                <e-linestyle width="0"></e-linestyle>
+                <e-majorticklines width="0"></e-majorticklines>
+            </e-chart-primaryyaxis>
+            <e-chart-chartarea>
+                <e-chartarea-border width="0"></e-chartarea-border>
+            </e-chart-chartarea>
+            <e-series-collection>
+                <e-series dataSource="Model.HedgefundTwoChartData" name="@Model.HedgefundTwoName" xName="xValue" width="2" opacity="1" yName="yValue" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                    <e-series-marker visible="true" height="10" width="10"></e-series-marker>
+                </e-series>
+            </e-series-collection>
+        </ejs-chart>

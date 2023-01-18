@@ -1,0 +1,20 @@
+﻿@using ProjektIO.Extensions
+@using Syncfusion.EJ2;
+@model List<ProjektIO.Entities.Hedgefund>
+
+@{
+    var list = new SelectList(Model, "Id", "Name");
+}
+
+<form method="get" asp-action="CompareChartsDetails">
+    <select name="hedgefundOneId"
+            asp-items="list">
+    </select>
+
+    <select name="hedgefundTwoId"
+            asp-items="list">
+    </select>
+
+    <input class="btn btn-outline-primary" type="submit" value="Submit" />
+</form>
+

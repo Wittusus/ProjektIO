@@ -32,6 +32,14 @@ namespace ProjektIO.Controllers
         public async Task<IActionResult> ShowHistory(int id)
         {
             var histories = await _context.HedgefundsHistory.Where(x => x.HedgefundId == id).ToListAsync();
+            List<LineChartData> chartData = GetChartData(histories);
+            chartData = chartData.OrderByDescending(x => x.xValue).ToList();
+            var viewModel = new HedgeFundHistoriesGetViewModel() { HedgefundHistories = histories, ChartDatas = chartData };
+            return View(viewModel);
+        }
+
+        private static List<LineChartData> GetChartData(List<HedgefundHistory> histories)
+        {
             var chartData = new List<LineChartData>
             {
                 /*
@@ -46,21 +54,47 @@ namespace ProjektIO.Controllers
             };
             foreach (var item in histories)
             {
-                var outputItem = new LineChartData {  xValue = item.ChangeDate, yValue = item.ReturnRate };
+                var outputItem = new LineChartData { xValue = item.ChangeDate, yValue = item.ReturnRate };
                 chartData.Add(outputItem);
             }
             var returnRates = histories.Select(x => x.ReturnRate).ToList();
             var lastRate = returnRates.LastOrDefault();
             var dev = returnRates.StdDev();
-            for (int i = 1; i<=5; i++)
+            for (int i = 1; i <= 5; i++)
             {
                 lastRate = lastRate + dev;
                 var outputItem = new LineChartData { xValue = DateTime.Now.AddDays(i), yValue = lastRate };
                 chartData.Add(outputItem);
             }
-            chartData = chartData.OrderByDescending(x => x.xValue).ToList();
-            var viewModel = new HedgeFundHistoriesGetViewModel() { HedgefundHistories = histories, ChartDatas = chartData };
-            return View(viewModel);
+
+            return chartData;
+        }
+
+        //GET: Compare two charts
+        public async Task<IActionResult> CompareCharts()
+        {
+            var hedgefunds = await _context.Hedgefunds.ToListAsync();
+           
+            return View(hedgefunds);
+        }
+
+        public async Task<IActionResult> CompareChartsDetails(long hedgefundOneId, long hedgefundTwoId)
+        {
+            var hedge1 = await _context.Hedgefunds.Where(x => x.Id == hedgefundOneId).FirstOrDefaultAsync();
+            var hedge2 = await _context.Hedgefunds.Where(x => x.Id == hedgefundTwoId).FirstOrDefaultAsync();
+            var historiesOne = await _context.HedgefundsHistory.Where(x => x.HedgefundId == hedgefundOneId).ToListAsync();
+            var historiesTwo = await _context.HedgefundsHistory.Where(x => x.HedgefundId == hedgefundTwoId).ToListAsync();
+            List<LineChartData> chartDataForOne = GetChartData(historiesOne).OrderByDescending(x => x.xValue).ToList();
+            List<LineChartData> chartDataForTwo = GetChartData(historiesTwo).OrderByDescending(x => x.xValue).ToList();
+
+            var model = new ChartDetailsViewModel()
+            {
+                HedgefundOneChartData= chartDataForOne,
+                HedgefundTwoChartData= chartDataForTwo,
+                HedgefundOneName = hedge1.Name,
+                HedgefundTwoName = hedge2.Name
+            };
+            return View(model);
         }
 
         // GET: HedgefundHistories/Details/5
